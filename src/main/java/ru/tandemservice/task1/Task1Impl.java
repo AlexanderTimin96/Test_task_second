@@ -29,78 +29,65 @@ public class Task1Impl implements IStringRowsListSorter {
         return INSTANCE;
     }
 
+
+    // Индекс колонки начинается с 0
+
+    //Приоритет значений:
+    // 1. строка равно null
+    // 2. Строка, которая не имеет колонку с данным индексом
+    // 3. Колонка с индексом имеет значение null
+    // 4. Колонка с индексом имеет пустое значение
+    // 5. Колонки с индексом начинается с подстроки которая является числом числа:
+    // - вначале идет меньшее число
+    // 6. Обычное сравнение строк посимвольно, через метод compareTo
     @Override
     public void sort(final List<String[]> rows, final int columnIndex) {
+        //проверка, что лист не null
+        if (rows == null) throw new RuntimeException();
+        // Реализовываем компоратор
+        rows.sort((r1, r2) -> {
 
-        //Проверяем корректность индекса
-        for (String[] arr : rows) {
-            if (arr.length - 1 > columnIndex) {
-                throw new RuntimeException("Введенный индекс превышает количество строк");
-            }
-        }
+            //сначала сортировка по самим строкам
+            if (r1 == null && r2 == null) return 0;
+            if (r1 == null) return -1;
+            if (r2 == null) return 1;
 
-        rows.sort((o1, o2) -> {
+            //сортировка строк с которых сортирующей колонки совсем нет
+            if (r1.length < (columnIndex + 1) && r2.length < (columnIndex + 1)) return 0;
+            if (r1.length < (columnIndex + 1)) return -1;
+            if (r2.length < (columnIndex + 1)) return 1;
+
             //Сортировка строчек с null значениями
-            if (o1[columnIndex] == null & o2[columnIndex] == null) return 0;
-            if (o1[columnIndex] == null) return 1;
-            if (o2[columnIndex] == null) return 1;
+            if (r1[columnIndex] == null && r2[columnIndex] == null) return 0;
+            if (r1[columnIndex] == null) return -1;
+            if (r2[columnIndex] == null) return 1;
 
             // Создаем переменные чтобы не обращаться в массив каждый раз
-            String str1 = o1[columnIndex];
-            String str2 = o2[columnIndex];
+            String str1 = r1[columnIndex];
+            String str2 = r2[columnIndex];
 
-            //Проверка на полное совпадение строчек
+            //Проверка на полное совпадение колонки
             if (str1.equals(str2)) return 0;
 
             //Сортировка строчек с пустыми значениями
-            if (str1.equals("")) return 1;
+            if (str1.equals("")) return -1;
             if (str2.equals("")) return 1;
 
-            //Находим индекс последнего вхождение числа в каждую строку
-            int numbIndex1 = findLastIndexInSubstringWhichIsNumber(str1);
-            int numbIndex2 = findLastIndexInSubstringWhichIsNumber(str2);
+            //Выделяем первые непрерывные максимальные фрагменты строки
+            String substring1 = str1.split(" ")[0];
+            String substring2 = str2.split(" ")[0];
 
-            //Выбираем минимальный индекс из двух
-            int minIndex = Math.min(numbIndex1, numbIndex2);
-
-            //Находим числа из строк с одинаковым разрядом
-            int numb1 = findFirstNumeric(str1, minIndex);
-            int numb2 = findFirstNumeric(str2, minIndex);
-
-            //Если числа не равны, то сравниваем их
-            if (numb1 != numb2) {
+            try {
+                //Парсим строчки в инты
+                int numb1 = Integer.parseInt(substring1);
+                int numb2 = Integer.parseInt(substring2);
+                //Сравниваем инты
                 return Integer.compare(numb1, numb2);
-            }
 
-            return str1.compareTo(str2);
+            } catch (NumberFormatException e) {
+                //Если дошли до этого момента, значит это обычные строки
+                return str1.compareTo(str2);
+            }
         });
-    }
-
-    private int findLastIndexInSubstringWhichIsNumber(String str) {
-
-        String[] path = str.split(" ");
-
-        int count = 0;
-        for (int i = 0; i < path[0].length(); i++) {
-            if (!Character.isDigit(path[0].charAt(i))) {
-                break;
-            }
-            count++;
-        }
-        return count;
-    }
-
-    private int findFirstNumeric(String str, int index) {
-
-        String[] path = str.split(" ");
-
-        StringBuilder stringBuilder = new StringBuilder();
-        for (int i = 0; i < index; i++) {
-            if (!Character.isDigit(path[0].charAt(i))) {
-                break;
-            }
-            stringBuilder.append(path[0].charAt(i));
-        }
-        return Integer.parseInt(stringBuilder.toString());
     }
 }

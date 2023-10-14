@@ -17,33 +17,43 @@ public class Task1ImplTests {
     @BeforeEach
     public void fillList() {
         expected = new ArrayList<>();
-        String[] str1 = {"First str", "Second str", "111258 str"};
-        String[] str2 = {"First str", "Second str", "1 str"};
+        String[] str1 = {"First str", "Second str", "1 str"};
+        String[] str2 = {"First str", "Second str", "111258 str"};
         String[] str3 = {"First str", "Second str", "5 str"};
         String[] str4 = {"First str", "Second str", ""};
         String[] str5 = {"First str", "Second str", null};
+        String[] str6 = {"First str", "Second str"};
 
+        String[] str7 = {"First str"};
+
+        expected.add(null);
+        expected.add(str6);
         expected.add(str5);
         expected.add(str4);
-        expected.add(str2);
         expected.add(str1);
         expected.add(str3);
+        expected.add(str2);
+
     }
 
     @Test
     public void sortedTests() {
         result = new ArrayList<>();
-        String[] str1 = {"First str", "Second str", "111258 str"};
-        String[] str2 = {"First str", "Second str", "1 str"};
+        String[] str1 = {"First str", "Second str", "1 str"};
+        String[] str2 = {"First str", "Second str", "111258 str"};
         String[] str3 = {"First str", "Second str", "5 str"};
         String[] str4 = {"First str", "Second str", ""};
         String[] str5 = {"First str", "Second str", null};
+        String[] str6 = {"First str", "Second str"};
 
-        result.add(str5);
-        result.add(str4);
         result.add(str1);
         result.add(str2);
         result.add(str3);
+        result.add(str4);
+        result.add(str5);
+        result.add(str6);
+        result.add(null);
+
 
         stringRowsListSorter.sort(result, 2);
 
@@ -54,14 +64,7 @@ public class Task1ImplTests {
         }
     }
 
-    @Test
-    public void sortedTest_throwException() {
-        Assertions.assertThrows(RuntimeException.class, () -> stringRowsListSorter.sort(expected, 5));
-    }
-
     public void printArr(List<String[]> list) {
-        for (String[] str : list) {
-            System.out.println(Arrays.toString(str));
-        }
+        list.forEach(str -> System.out.println(Arrays.toString(str)));
     }
 }
